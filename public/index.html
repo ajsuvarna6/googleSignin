@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Google Signin</title>
+    <meta name="description" content="DESCRIPTION">
+    <meta name="google-signin-client_id" content="704173116896-ivj3np0kr2pvmk4cpm5ttb49sa73j59e.apps.googleusercontent.com">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <a href="#" onclick="checkSignedIn()">Check signIn</a>
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js?onload=onLoadCallback" async defer></script>
+  <script>
+    window.onLoadCallback = function(){
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.getAuthInstance({
+          client_id: '704173116896-ivj3np0kr2pvmk4cpm5ttb49sa73j59e.apps.googleusercontent.com',
+          fetch_basic_profile: false,
+          scope: 'profile'
+        });
+        auth2.signIn().then(function() {
+          console.log("a",auth2.currentUser.get().getId());
+        });
+      });
+    }
+
+    var token="";
+
+    function onSignIn(googleUser) {
+      var profile ="";
+      console.log("b",auth2.isSignedIn.get());
+      if (auth2.isSignedIn.get()) {
+        profile = auth2.currentUser.get().getBasicProfile();
+      } else {
+        profile = googleUser.getBasicProfile();
+      }
+      token=googleUser.getAuthResponse().id_token;
+      console.log('ID: ' + profile.getId());
+      console.log('Full Name: ' + profile.getName());
+      console.log('Given Name: ' + profile.getGivenName());
+      console.log('Family Name: ' + profile.getFamilyName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail());
+      console.log('user:',token);
+    }
+
+    function checkSignedIn(googleUser){
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+token);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+        console.log('Signed in as: ' + xhr.responseText);
+      };
+      xhr.send();
+      console.log(auth2.currentUser.get().getBasicProfile().getId());
+    }
+
+    function signOut() {
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('User signed out.');
+      });
+    }
+  </script>
+  </body>
+</html>
