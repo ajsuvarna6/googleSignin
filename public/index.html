@@ -49,16 +49,21 @@
     }
 
     function checkSignedIn(googleUser){
-      var xhr = new XMLHttpRequest();
-      xhr.open('get', 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+token);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.onload = function() {
-        console.log('Signed in as: ' + xhr.responseText);
-      };
-      xhr.send();
+      // var sessionParams = {
+      //  'client_id': auth2.currentUser.get().getBasicProfile().getId(),
+      //  'session_state': null
+      // };
+      // gapi.auth2.checkSessionState(sessionParams, function(stateMatched) {
+      //   if (stateMatched == true) {
+      //     console.log("You be logged out");
+      //   } else {
+      //     console.log("You be logged in");
+      //   }
+      // });
+      console.log(auth2.isSignedIn.get()); //checking for logged in or not
       console.log(auth2.currentUser.get().getBasicProfile().getId());
     }
-
+    // reference= https://developers.google.com/api-client-library/javascript/reference/referencedocs#googleauthissignedinget
     function signOut() {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
